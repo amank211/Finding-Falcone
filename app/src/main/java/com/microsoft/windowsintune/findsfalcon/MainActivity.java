@@ -14,7 +14,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -29,7 +28,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.internal.LinkedTreeMap;
 import com.microsoft.windowsintune.findsfalcon.DataModels.Planet;
 import com.microsoft.windowsintune.findsfalcon.DataModels.Rocket;
-
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -42,7 +40,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.gson.reflect.TypeToken;
-
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
@@ -64,14 +61,13 @@ public class MainActivity extends AppCompatActivity {
 
     RadioGroup mPlanetsRadioGroup;
     RadioGroup mRocketListView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initViews();
     }
-    
+
     void printMap(){
         for (Map.Entry<PlanetRadioButton, RocketRadioButton> set :
                 mPairs.entrySet()) {
@@ -99,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
     void initViews(){
         mPlanetsRadioGroup = findViewById(R.id.planets);
         mRocketListView = findViewById(R.id.rockets);
-
         mPlanetsRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -130,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 RocketRadioButton button = radioGroup.findViewById(i);
-
 
                 if(button == null) return;
                 Log.d("CHECK", "isCheked: " + button.isChecked());
@@ -195,74 +189,74 @@ public class MainActivity extends AppCompatActivity {
         Response.Listener<String> responseListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Type listType = new TypeToken<ArrayList<Rocket>>(){}.getType();
+                Type listType = new TypeToken<ArrayList<Rocket>>() {
+                }.getType();
                 mRockets = gson.fromJson(response, listType);
-                for (int i = 0; i<mRockets.size(); i++) {
+                for (int i = 0; i < mRockets.size(); i++) {
                     mRockets.get(i).setAvailableUnits(mRockets.get(i).getTotalNo());
                     RocketRadioButton radioButton = new RocketRadioButton(getBaseContext());
                     radioButton.setmRocket(mRockets.get(i));
                     mRocketListView.addView(radioButton);
                 }
-
             }
+
         };
-        final String wrong = "Wrong";
-        Response.ErrorListener errorListener = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getBaseContext(),wrong, Toast.LENGTH_LONG).show();
-            }
-        };
-
-        Response.ErrorListener errorListenerToken = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getBaseContext(),"Token not received", Toast.LENGTH_LONG).show();
-            }
-        };
-
-
-        final StringRequest requestForRockets = new StringRequest(URL_ROCKETS, responseListener, errorListener);
-        queue.add(requestForRockets);
-
-        Response.Listener<String> planetResponse = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                Type listType = new TypeToken<ArrayList<Planet>>(){}.getType();
-                mPlanets = gson.fromJson(response, listType);
-                for(Planet planet: mPlanets){
-                    PlanetRadioButton radioButton = new PlanetRadioButton(getBaseContext());
-                    PlanetRadioButton radioButtonForAll = new PlanetRadioButton(getBaseContext());
-                    radioButton.setmPlanet(planet);
-                    radioButtonForAll.setmPlanet(planet);
-                    mPairs.put(radioButton, null);
-                    mPlanetsRadioGroup.addView(radioButton);
+            final String wrong = "Wrong";
+            Response.ErrorListener errorListener = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getBaseContext(), wrong, Toast.LENGTH_LONG).show();
                 }
-            }
-        };
-        final JSONObject jsonBody = new JSONObject();
-        final String requestBody = jsonBody.toString();
+            };
+            Response.ErrorListener errorListenerToken = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getBaseContext(), "Token not received", Toast.LENGTH_LONG).show();
+                }
+            };
 
-        Log.d("JSON", requestBody);
+            final StringRequest requestForRockets = new StringRequest(URL_ROCKETS, responseListener, errorListener);
+            queue.add(requestForRockets);
 
-        final StringRequest requestForPlanets = new StringRequest(URL_PLANETS, planetResponse, errorListener);
+            Response.Listener<String> planetResponse = new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+
+                    Type listType = new TypeToken<ArrayList<Planet>>() {
+                    }.getType();
+                    mPlanets = gson.fromJson(response, listType);
+                    for (Planet planet : mPlanets) {
+                        PlanetRadioButton radioButton = new PlanetRadioButton(getBaseContext());
+                        PlanetRadioButton radioButtonForAll = new PlanetRadioButton(getBaseContext());
+                        radioButton.setmPlanet(planet);
+                        radioButtonForAll.setmPlanet(planet);
+                        mPairs.put(radioButton, null);
+                        mPlanetsRadioGroup.addView(radioButton);
+                    }
+                }
+            };
+            final JSONObject jsonBody = new JSONObject();
+            final String requestBody = jsonBody.toString();
+
+        Log.d("JSON",requestBody);
+
+            final StringRequest requestForPlanets = new StringRequest(URL_PLANETS, planetResponse, errorListener);
         queue.add(requestForPlanets);
 
-        final StringRequest requestForToken = new StringRequest(Request.Method.POST, URL_TOKEN, tokenResponseListener, errorListenerToken){
-            @Override
-            public byte[] getBody() throws AuthFailureError {
-                return requestBody.getBytes();
-            }
+            final StringRequest requestForToken = new StringRequest(Request.Method.POST, URL_TOKEN, tokenResponseListener, errorListenerToken) {
+                @Override
+                public byte[] getBody() throws AuthFailureError {
+                    return requestBody.getBytes();
+                }
 
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                return headers;
-            }
-        };
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("Content-Type", "application/json");
+                    return headers;
+                }
+            };
         queue.add(requestForToken);
         queue.start();
-    }
+        }
 }

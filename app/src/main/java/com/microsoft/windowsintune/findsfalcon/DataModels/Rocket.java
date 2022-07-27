@@ -2,7 +2,6 @@ package com.microsoft.windowsintune.findsfalcon.DataModels;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
 import java.util.Observable;
 
 public class Rocket{
@@ -56,7 +55,6 @@ public class Rocket{
     public Integer getAvailableUnits() {
         return availableUnits;
     }
-
     public void incr(){
         availableUnits++;
     }
@@ -64,7 +62,6 @@ public class Rocket{
     public void decr(){
         availableUnits--;
     }
-
     public void setAvailableUnits(Integer availableUnits) {
         this.availableUnits = availableUnits;
     }
